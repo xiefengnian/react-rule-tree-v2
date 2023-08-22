@@ -29,17 +29,17 @@ export default () => {
                   {fields.map((field) => {
                     console.log(fields);
                     return (
-                      <Form.Item {...field}>
+                      <Form.Item {...field} key={field.key}>
                         <RuleTree
                           fields={[
                             {
                               name: 'test',
-                              render(ctx, node, current) {
+                              render() {
                                 return <Input />;
                               },
                             },
                           ]}
-                          relation={
+                          relationRender={
                             <Select>
                               <Select.Option value="and">and</Select.Option>
                               <Select.Option value="or">or</Select.Option>

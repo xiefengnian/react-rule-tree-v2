@@ -2,6 +2,8 @@ import type { Rule } from 'rc-field-form/lib/interface';
 import type React from 'react';
 import type { MutableRefObject } from 'react';
 
+export type AnyFunction = (...args: any[]) => any;
+
 export interface ItemType {
   name: string;
 }
@@ -68,7 +70,11 @@ export type Fields = {
   rules?: Rule[];
   initialValue?: any;
   /** render 请勿使用 ()=> (value,onChange)=> React.ReactNode; 的语法, 复杂组件请使用 ()=>\<YourComponent /\>; 进行封装。 */
-  render: (ctx: RenderContext, node: Node<any>, current: FieldCurrent) => React.ReactNode;
+  render: (
+    ctx: RenderContext,
+    node: Node<any>,
+    current: FieldCurrent,
+  ) => React.ReactNode;
 }[];
 
 export type CreateDragItem<D = any> = (props: {
@@ -107,7 +113,11 @@ export type RowConfig = {
   disabled?: boolean;
 };
 
-export type CurrentRow = { index: number; length: number; data: Record<any, any> };
+export type CurrentRow = {
+  index: number;
+  length: number;
+  data: Record<any, any>;
+};
 
 export type CurrentNode = {
   type: Relation | Field | any;
@@ -127,7 +137,7 @@ export type CurrentButton = {
 };
 
 // 需要透出的token结构
-export type RuleTreeToken = {};
+export type RuleTreeToken = Record<any, any>;
 
 export type RuleTreeProps = {
   fields: Fields;
@@ -146,21 +156,30 @@ export type RuleTreeProps = {
   canAddRuleGroup?: (node: CanAndRuleProps) => boolean | 'hide';
   description?: React.ReactNode;
   defaultValue?: Record<string, any>;
-  onFieldFocus?: (key: number, name: string, value: string, fieldsData: Record<any, any>) => void;
+  onFieldFocus?: (
+    key: number,
+    name: string,
+    value: string,
+    fieldsData: Record<any, any>,
+  ) => void;
   noDndProvider?: boolean;
   modifyTreeNode?: (currentNode: CurrentNode) => RowConfig;
   modifyButton?: (currentButton: CurrentButton) => Partial<ButtonConfig>;
   actionsRender?: (
     currentNode: CurrentNode & { disabled: boolean },
     actions: {
-      remove: Function;
-      copy: Function;
+      remove: AnyFunction;
+      copy: AnyFunction;
     },
   ) => {
     remove?: React.ReactElement;
     copy?: React.ReactElement;
   };
-  onRemove?: (type: Relation | Field, namePath: string[], data: Record<any, any>) => boolean;
+  onRemove?: (
+    type: Relation | Field,
+    namePath: string[],
+    data: Record<any, any>,
+  ) => boolean;
 };
 
 export type IndexParams = {

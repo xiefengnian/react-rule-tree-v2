@@ -1,14 +1,20 @@
+import cx from 'classnames';
 import _ from 'lodash';
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import { Space } from '../components/compatible/Space';
-import { TYPE } from './DropPlacement';
 import type { NodeType, RowConfig } from '../type';
-import cx from 'classnames';
+import { TYPE } from './DropPlacement';
+import { ReactPropsTypeWithChildren } from './TreeField';
 
 export interface DragItemProps {
   thisKey: number;
-  onMove: (fromKey: number, toKey: number, order: number, originOrder: number) => void;
+  onMove: (
+    fromKey: number,
+    toKey: number,
+    order: number,
+    originOrder: number,
+  ) => void;
   namePath: string[];
   disabled?: boolean;
   rowConfig: RowConfig;
@@ -16,7 +22,9 @@ export interface DragItemProps {
   nodeType?: NodeType;
 }
 
-export const DragItem: React.FC<DragItemProps & { dragger: React.ReactNode }> = ({
+export const DragItem: React.FC<
+  DragItemProps & { dragger: React.ReactNode } & ReactPropsTypeWithChildren
+> = ({
   children,
   disabled,
   thisKey,
@@ -59,7 +67,7 @@ export const DragItem: React.FC<DragItemProps & { dragger: React.ReactNode }> = 
         className={cx(
           rowConfig.className,
           `drag-container`,
-          `drag-container-${nodeType.toLowerCase()}`,
+          `drag-container-${nodeType!.toLowerCase()}`,
         )}
       >
         <Space>
@@ -77,7 +85,9 @@ type PureDragItemProps = {
   disabled?: boolean;
 };
 
-export const PureDragItem: React.FC<PureDragItemProps> = ({ data, onDrop, disabled, children }) => {
+export const PureDragItem: React.FC<
+  PureDragItemProps & ReactPropsTypeWithChildren
+> = ({ data, onDrop, disabled, children }) => {
   const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
     type: TYPE,
     item: { data, from: 'external' },

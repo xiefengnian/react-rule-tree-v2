@@ -136,18 +136,18 @@ describe('👻 可添加的条件判断', () => {
       </Form>,
     );
     await waitForComponentToPaint(html, 1000);
-    expect(html.find('.techui-rule-tree-button-left').get(0).props.style.cursor).toEqual(
-      'not-allowed',
-    );
-    expect(html.find('.techui-rule-tree-button-left').get(1).props.style.cursor).toEqual(
-      'not-allowed',
-    );
-    expect(html.find('.techui-rule-tree-button-right').get(0).props.style.cursor).toEqual(
-      'pointer',
-    );
-    expect(html.find('.techui-rule-tree-button-right').get(1).props.style.cursor).toEqual(
-      'pointer',
-    );
+    expect(
+      html.find('.techui-rule-tree-button-left').get(0).props.style.cursor,
+    ).toEqual('not-allowed');
+    expect(
+      html.find('.techui-rule-tree-button-left').get(1).props.style.cursor,
+    ).toEqual('not-allowed');
+    expect(
+      html.find('.techui-rule-tree-button-right').get(0).props.style.cursor,
+    ).toEqual('pointer');
+    expect(
+      html.find('.techui-rule-tree-button-right').get(1).props.style.cursor,
+    ).toEqual('pointer');
     html.unmount();
   });
 
@@ -213,14 +213,18 @@ describe('👻 可添加的条件判断', () => {
       </Form>,
     );
     await waitForComponentToPaint(html, 1000);
-    expect(html.find('.techui-rule-tree-button-left').get(0).props.style.cursor).toEqual('pointer');
-    expect(html.find('.techui-rule-tree-button-left').get(1).props.style.cursor).toEqual('pointer');
-    expect(html.find('.techui-rule-tree-button-right').get(0).props.style.cursor).toEqual(
-      'not-allowed',
-    );
-    expect(html.find('.techui-rule-tree-button-right').get(1).props.style.cursor).toEqual(
-      'not-allowed',
-    );
+    expect(
+      html.find('.techui-rule-tree-button-left').get(0).props.style.cursor,
+    ).toEqual('pointer');
+    expect(
+      html.find('.techui-rule-tree-button-left').get(1).props.style.cursor,
+    ).toEqual('pointer');
+    expect(
+      html.find('.techui-rule-tree-button-right').get(0).props.style.cursor,
+    ).toEqual('not-allowed');
+    expect(
+      html.find('.techui-rule-tree-button-right').get(1).props.style.cursor,
+    ).toEqual('not-allowed');
     html.unmount();
   });
 
@@ -519,9 +523,15 @@ describe('👻 modify', () => {
     expect(html.find('.test-class-0-1-0').length).toEqual(1);
 
     // draggable
-    expect(html.exists('.test-class-0-0 .techui-rule-tree-action-drag')).toBeTruthy();
-    expect(html.exists('.test-class-0-1 .techui-rule-tree-action-drag')).toBeFalsy();
-    expect(html.exists('.test-class-0-1-0 .techui-rule-tree-action-drag')).toBeFalsy();
+    expect(
+      html.exists('.test-class-0-0 .techui-rule-tree-action-drag'),
+    ).toBeTruthy();
+    expect(
+      html.exists('.test-class-0-1 .techui-rule-tree-action-drag'),
+    ).toBeFalsy();
+    expect(
+      html.exists('.test-class-0-1-0 .techui-rule-tree-action-drag'),
+    ).toBeFalsy();
 
     // removable
     expect(html.exists('.test-class-0-0 .anticon-delete')).toBeTruthy();
@@ -529,9 +539,15 @@ describe('👻 modify', () => {
     expect(html.exists('.test-class-0-1-0 .anticon-delete')).toBeFalsy();
 
     // copyable
-    expect(html.exists('.test-class-0-0 .techui-rule-tree-action-copy')).toBeTruthy();
-    expect(html.exists('.test-class-0-1 .techui-rule-tree-action-copy')).toBeFalsy();
-    expect(html.exists('.test-class-0-1-0 .techui-rule-tree-action-copy')).toBeFalsy();
+    expect(
+      html.exists('.test-class-0-0 .techui-rule-tree-action-copy'),
+    ).toBeTruthy();
+    expect(
+      html.exists('.test-class-0-1 .techui-rule-tree-action-copy'),
+    ).toBeFalsy();
+    expect(
+      html.exists('.test-class-0-1-0 .techui-rule-tree-action-copy'),
+    ).toBeFalsy();
 
     html.unmount();
   });
@@ -589,6 +605,7 @@ describe('👻 onRemove', () => {
             onClick={() => {
               shouldRemoveRef.current = true;
             }}
+            type="button"
           >
             should remove
           </button>
@@ -596,8 +613,14 @@ describe('👻 onRemove', () => {
       );
     };
     const component = mount(<Demo />);
-    component.find('#form span.techui-rule-tree-action-remove').simulate('click');
-    expect(removeCallback.mock.calls[0][0]).toEqual(['FIELD', ['0'], { foo: 1 }]);
+    component
+      .find('#form span.techui-rule-tree-action-remove')
+      .simulate('click');
+    expect(removeCallback.mock.calls[0][0]).toEqual([
+      'FIELD',
+      ['0'],
+      { foo: 1 },
+    ]);
     component.find('form#form').simulate('submit');
     await waitForComponentToPaint(component, 1000);
     // 删除被拦截后，数据应当不变
@@ -615,8 +638,14 @@ describe('👻 onRemove', () => {
     // 切换为可删除
     component.find('button#should_remove').simulate('click');
     await waitForComponentToPaint(component, 1000);
-    component.find('#form span.techui-rule-tree-action-remove').simulate('click');
-    expect(removeCallback.mock.calls[1][0]).toEqual(['FIELD', ['0'], { foo: 1 }]);
+    component
+      .find('#form span.techui-rule-tree-action-remove')
+      .simulate('click');
+    expect(removeCallback.mock.calls[1][0]).toEqual([
+      'FIELD',
+      ['0'],
+      { foo: 1 },
+    ]);
     component.find('form#form').simulate('submit');
     await waitForComponentToPaint(component, 1000);
     // 删除后，数据变少

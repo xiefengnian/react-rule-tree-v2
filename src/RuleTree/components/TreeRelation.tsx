@@ -1,16 +1,20 @@
-import React from 'react';
-import type { IndexParams, Node, RowConfig, RuleTreeProps } from '../type';
+import { DeleteFilled, HolderOutlined, PlusOutlined } from '@ant-design/icons';
 import cx from 'classnames';
+import Form from 'rc-field-form';
+import React from 'react';
+import { prefixCls } from '../constants';
+import type { Tree } from '../tree';
+import type { IndexParams, Node, RowConfig, RuleTreeProps } from '../type';
 import type { DragItemProps } from './DragItem';
 import { DragItem } from './DragItem';
-import { Fragment } from './Fragment';
-import type { Tree } from '../tree';
-import Form from 'rc-field-form';
 import { DropPlacement } from './DropPlacement';
-import { DeleteFilled, HolderOutlined, PlusOutlined } from '@ant-design/icons';
-import { prefixCls } from '../constants';
+import { Fragment } from './Fragment';
+import { AnyFunction, ReactPropsTypeWithChildren } from './TreeField';
 
-type TreeRelationProps = Pick<RuleTreeProps, 'relationRender' | 'modifyButton'> & {
+type TreeRelationProps = Pick<
+  RuleTreeProps,
+  'relationRender' | 'modifyButton'
+> & {
   currentKey: string;
   currentNode: Node<any>;
   isRoot: boolean;
@@ -20,8 +24,8 @@ type TreeRelationProps = Pick<RuleTreeProps, 'relationRender' | 'modifyButton'> 
   onMove: DragItemProps['onMove'];
   treeInstance: Tree;
   render: any;
-  handleAdd: Function;
-  handleRemove: Function;
+  handleAdd: AnyFunction;
+  handleRemove: AnyFunction;
   nodeKey: number;
   mapKey: string;
 };
@@ -31,7 +35,9 @@ type RelationElementProps = {
   onChange: any;
   rowConfig: RowConfig;
 };
-class RelationElement extends React.Component<RelationElementProps> {
+class RelationElement extends React.Component<
+  RelationElementProps & ReactPropsTypeWithChildren
+> {
   shouldComponentUpdate(nextProps: Readonly<RelationElementProps>): boolean {
     if (this.props.value === nextProps.value) {
       return false;
@@ -54,7 +60,10 @@ class RelationElement extends React.Component<RelationElementProps> {
 }
 
 class TreeRelation extends React.Component<TreeRelationProps> {
-  shouldComponentUpdate(nextProps: Readonly<TreeRelationProps>): boolean {
+  shouldComponentUpdate(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    nextProps: Readonly<TreeRelationProps>,
+  ): boolean {
     return true;
   }
 
@@ -96,7 +105,11 @@ class TreeRelation extends React.Component<TreeRelationProps> {
     return (
       <div
         key={currentKey}
-        className={cx('relation-container', `index-${indexParams.index}`, `id-${currentKey}`)}
+        className={cx(
+          'relation-container',
+          `index-${indexParams.index}`,
+          `id-${currentKey}`,
+        )}
       >
         <div className={cx('relation-node', `relation-node-${id}`)}>
           <div
@@ -131,7 +144,10 @@ class TreeRelation extends React.Component<TreeRelationProps> {
                 />
               }
             >
-              <Form.Field name={relationNamePath} initialValue={currentNode.data.relation}>
+              <Form.Field
+                name={relationNamePath}
+                initialValue={currentNode.data.relation}
+              >
                 {(props) => {
                   const relationElement =
                     typeof relationRender === 'function'
@@ -191,7 +207,11 @@ class TreeRelation extends React.Component<TreeRelationProps> {
                     parentNamePath={currentNode.namePath}
                     relatedKeys={
                       index > 0
-                        ? [child.key, child.parent?.key, children[index - 1].key]
+                        ? [
+                            child.key,
+                            child.parent?.key,
+                            children[index - 1].key,
+                          ]
                         : [child.key, child.parent?.key]
                     }
                   >

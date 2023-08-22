@@ -8,13 +8,18 @@ export const flatObject = (obj: Record<any, any>) => {
     if (item.relation) {
       result[(parentKey ? `${parentKey}.` : '') + 'relation'] = item.relation;
       item.children?.forEach((arrayItem: any, index: number) => {
-        fn(arrayItem, (parentKey ? `${parentKey}.` : '') + 'children' + '.' + index);
+        fn(
+          arrayItem,
+          (parentKey ? `${parentKey}.` : '') + 'children' + '.' + index,
+        );
       });
     } else {
       for (const key in item) {
-        const val = item[key];
-        result[(parentKey ? `${parentKey}.` : '') + key] =
-          typeof val === 'object' ? _.cloneDeep(val) : val;
+        if (item.hasOwnProperty(key)) {
+          const val = item[key];
+          result[(parentKey ? `${parentKey}.` : '') + key] =
+            typeof val === 'object' ? _.cloneDeep(val) : val;
+        }
       }
     }
   };
@@ -67,15 +72,26 @@ export const drawSvgFromTreeInstance = (treeInstance: Tree) => {
     ).getClientRects();
 
     _.forEach<HTMLElement>(
-      document.querySelectorAll(`.dp-id-${createCurrentKey(parent.namePath)}`) as any,
+      document.querySelectorAll(
+        `.dp-id-${createCurrentKey(parent.namePath)}`,
+      ) as any,
       (item) => {
         const childRects = item.getClientRects();
         const order = item.getAttribute('data-order');
         lines.push({
-          fromX: parentRects[0].left + parentRects[0].width - rootContainerRects.left,
-          fromY: parentRects[0].top + parentRects[0].height / 2 - rootContainerRects.top,
+          fromX:
+            parentRects[0].left +
+            parentRects[0].width -
+            rootContainerRects.left,
+          fromY:
+            parentRects[0].top +
+            parentRects[0].height / 2 -
+            rootContainerRects.top,
           toX: childRects[0].left - rootContainerRects.left,
-          toY: childRects[0].top + childRects[0].height / 2 - rootContainerRects.top,
+          toY:
+            childRects[0].top +
+            childRects[0].height / 2 -
+            rootContainerRects.top,
           id: `f-${createCurrentKey(parent.namePath)}-o-${order}`,
         });
       },

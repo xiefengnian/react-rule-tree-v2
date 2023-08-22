@@ -1,19 +1,33 @@
 import { CopyFilled, DeleteFilled, HolderOutlined } from '@ant-design/icons';
+import cx from 'classnames';
 import type { FormInstance } from 'rc-field-form';
 import Form from 'rc-field-form';
 import React, { Component } from 'react';
-import type { Fields, IndexParams, Node, RenderContext, RowConfig, RuleTreeProps } from '../type';
-import { Space } from './compatible/Space';
+import { prefixCls } from '../constants';
+import type {
+  AnyFunction,
+  Fields,
+  IndexParams,
+  Node,
+  RenderContext,
+  RowConfig,
+  RuleTreeProps,
+} from '../type';
 import type { DragItemProps } from './DragItem';
 import { DragItem } from './DragItem';
-import { prefixCls } from '../constants';
-import cx from 'classnames';
-import _ from 'lodash';
+import { Space } from './compatible/Space';
 
-type TreeFieldProps = Pick<RuleTreeProps, 'actionsRender' | 'fields' | 'cascades' | 'onCascade'> & {
+export type ReactPropsTypeWithChildren = {
+  children?: React.ReactNode;
+};
+
+type TreeFieldProps = Pick<
+  RuleTreeProps,
+  'actionsRender' | 'fields' | 'cascades' | 'onCascade'
+> & {
   rowConfig: RowConfig;
-  handleCopy: Function;
-  handleRemove: Function;
+  handleCopy: AnyFunction;
+  handleRemove: AnyFunction;
   onMove: DragItemProps['onMove'];
   currentNode: Node<any>;
   currentKey: string;
@@ -27,10 +41,13 @@ type FieldElementProps = {
   fieldError: string[];
   namePath: string[];
   rowConfig: RowConfig;
-};
+} & ReactPropsTypeWithChildren;
 
 class FieldElement extends Component<FieldElementProps> {
-  shouldComponentUpdate(nextProps: Readonly<FieldElementProps>): boolean {
+  shouldComponentUpdate(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    nextProps: Readonly<FieldElementProps>,
+  ): boolean {
     // 暂时关闭，后面做性能优化
     // fieldError 要及时感知
     // if (!_.isEqual(this.props.fieldError, nextProps.fieldError)) {
@@ -43,7 +60,14 @@ class FieldElement extends Component<FieldElementProps> {
     return true;
   }
   render(): React.ReactNode {
-    const { children: fieldElement, value, onChange, rowConfig, fieldError, namePath } = this.props;
+    const {
+      children: fieldElement,
+      value,
+      onChange,
+      rowConfig,
+      fieldError,
+      namePath,
+    } = this.props;
 
     return React.cloneElement(fieldElement as React.ReactElement, {
       ...(fieldElement as React.ReactElement).props,
@@ -66,7 +90,7 @@ type FieldComponentProps = Pick<
   'currentKey' | 'currentNode' | 'form' | 'rowConfig'
 > & {
   name: Fields[0]['name'];
-  render: Function;
+  render: AnyFunction;
   indexParams: IndexParams;
   rules?: Fields[0]['rules'];
 } & Pick<RuleTreeProps, 'cascades' | 'onCascade'>;
@@ -99,7 +123,9 @@ class FieldComponent extends Component<FieldComponentProps> {
         return form.getFieldError(namePath);
       },
       getFieldValue: (ctxName: string) => {
-        return form.getFieldValue([currentNode.namePath.join('.')].concat(ctxName));
+        return form.getFieldValue(
+          [currentNode.namePath.join('.')].concat(ctxName),
+        );
       },
       setFieldValue: (_name, _value) => {
         form.setFields([
@@ -131,7 +157,11 @@ class FieldComponent extends Component<FieldComponentProps> {
 
     return (
       <div>
-        <Form.Field name={namePath} key={`field-${currentKey}-${name}`} rules={rules}>
+        <Form.Field
+          name={namePath}
+          key={`field-${currentKey}-${name}`}
+          rules={rules}
+        >
           {(props) => {
             const cascadesOnChange = (_props: any) => {
               props.onChange?.(_props); // onChange 必须在前，否则 onCascade 的值会延迟一次 onChange
@@ -182,8 +212,9 @@ class TreeField extends Component<TreeFieldProps> {
       onCascade,
     } = this.props;
 
-    // @ts-ignore
-    const hasAllow = Object.keys(rowConfig).filter((key) => rowConfig[key]).length > 0;
+    const hasAllow =
+      // @ts-ignore
+      Object.keys(rowConfig).filter((key) => rowConfig[key]).length > 0;
 
     const onCopy = () => {
       if (rowConfig.disabled) {
@@ -203,7 +234,10 @@ class TreeField extends Component<TreeFieldProps> {
       <CopyFilled
         className={`${prefixCls}-action-copy`}
         onClick={onCopy}
-        style={{ cursor: rowConfig.disabled ? 'not-allowed' : 'pointer', color: '#888888' }}
+        style={{
+          cursor: rowConfig.disabled ? 'not-allowed' : 'pointer',
+          color: '#888888',
+        }}
       />
     );
 
@@ -211,25 +245,29 @@ class TreeField extends Component<TreeFieldProps> {
       <DeleteFilled
         className={`${prefixCls}-action-remove`}
         onClick={onRemove}
-        style={{ cursor: rowConfig.disabled ? 'not-allowed' : 'pointer', color: '#888888' }}
+        style={{
+          cursor: rowConfig.disabled ? 'not-allowed' : 'pointer',
+          color: '#888888',
+        }}
       />
     );
 
     if (actionsRender) {
-      const { remove: customRemoveElement, copy: customCopyElement } = actionsRender(
-        {
-          // @ts-ignore
-          type: this.props.children?.type,
-          namePath: currentNode.namePath,
-          isRoot: !currentNode.parent,
-          data: currentNode.data,
-          disabled: rowConfig.disabled || false,
-        },
-        {
-          remove: onRemove,
-          copy: onCopy,
-        },
-      );
+      const { remove: customRemoveElement, copy: customCopyElement } =
+        actionsRender(
+          {
+            // @ts-ignore
+            type: this.props.children?.type,
+            namePath: currentNode.namePath,
+            isRoot: !currentNode.parent,
+            data: currentNode.data,
+            disabled: rowConfig.disabled || false,
+          },
+          {
+            remove: onRemove,
+            copy: onCopy,
+          },
+        );
       if (customRemoveElement) {
         removeElement = customRemoveElement;
       }
@@ -261,7 +299,10 @@ class TreeField extends Component<TreeFieldProps> {
           nodeType={'FIELD'}
           currentIndex={indexParams.index}
           dragger={
-            <HolderOutlined className={`${prefixCls}-action-drag`} style={{ color: '#595959' }} />
+            <HolderOutlined
+              className={`${prefixCls}-action-drag`}
+              style={{ color: '#595959' }}
+            />
           }
         >
           <div className="field-content">

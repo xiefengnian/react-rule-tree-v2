@@ -1,7 +1,7 @@
-import React from 'react';
-import type { Node, RuleTreeProps } from '../type';
-import cx from 'classnames';
 import { MinusCircleFilled, PlusCircleFilled } from '@ant-design/icons';
+import cx from 'classnames';
+import React from 'react';
+import type { Node } from '../type';
 
 type CollapseButtonProps = {
   toggleCollapse: (thisKey: number) => void;
